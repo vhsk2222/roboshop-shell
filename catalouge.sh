@@ -14,6 +14,7 @@ VALIDATE(){
     if [ $1 -ne 0 ] 
     then 
         echo -e "$2 ...$R Failed ..$N"
+        exit 1
     else 
         echo -e "$2 ...$G SUCCESSSSS ..$N"
     fi
@@ -25,66 +26,66 @@ exit 1 #You can give other than zero, that will stop the programm if the perviou
 else echo "You are ROOT"
 fi 
 
-dnf module disable nodejs -y
+dnf module disable nodejs -y &>> $LOGFILE
 
-VALIDATE $? "Disabling current NodeJS" &>> $LOGFILE
+VALIDATE $? "Disabling current NodeJS" 
 
-dnf module enable nodejs:18 -y
+dnf module enable nodejs:18 -y &>> $LOGFILE
 
-VALIDATE $? "Enabling NodeJS 18" &>> $LOGFILE
+VALIDATE $? "Enabling NodeJS 18" 
 
-dnf install nodejs -y
+dnf install nodejs -y &>> $LOGFILE
 
-VALIDATE $? "Installing NodeJS 18" &>> $LOGFILE
+VALIDATE $? "Installing NodeJS 18" 
 
-useradd roboshop
+useradd roboshop &>> $LOGFILE
 
-VALIDATE $? "Creating ROBOSHOP user" &>> $LOGFILE
+VALIDATE $? "Creating ROBOSHOP user"
 
-mkdir /app
+mkdir /app &>> $LOGFILE
 
-VALIDATE $? "Creating App dir" &>> $LOGFILE
+VALIDATE $? "Creating App dir" 
 
 curl -o /tmp/catalogue.zip https://roboshop-builds.s3.amazonaws.com/catalogue.zip
 
-VALIDATE $? "Downloading CATLOUGE application " &>> $LOGFILE
+VALIDATE $? "Downloading CATLOUGE application " 
 
-cd /app 
-unzip /tmp/catalogue.zip
+cd /app &>> $LOGFILE
+unzip /tmp/catalogue.zip &>> $LOGFILE
 
-VALIDATE $? "UNZIPPING CATLOUGE application " &>> $LOGFILE
+VALIDATE $? "UNZIPPING CATLOUGE application " 
 
-npm install 
+npm install &>> $LOGFILE
 
-VALIDATE $? "Installing dependecies " &>> $LOGFILE
+VALIDATE $? "Installing dependecies " 
 
 
 cp /home/centos/roboshop-shell/catalouge.service /etc/systemd/system/catalogue.service &>> $LOGFILE
 
-VALIDATE $? "Copying Catalouge service file" &>> $LOGFILE
+VALIDATE $? "Copying Catalouge service file" 
 
 systemctl daemon-reload &>> $LOGFILE
 
-VALIDATE $? "Catalouge daemon reload " &>> $LOGFILE
+VALIDATE $? "Catalouge daemon reload " 
 
 systemctl enable catalogue &>> $LOGFILE
 
-VALIDATE $? "Enabling CATLOUGE " &>> $LOGFILE
+VALIDATE $? "Enabling CATLOUGE " 
 
 systemctl start catalogue &>> $LOGFILE
 
-VALIDATE $? "STARTING CATALOUGE " &>> $LOGFILE
+VALIDATE $? "STARTING CATALOUGE " 
 
 cp /home/centos/roboshop-shell/mongo.repo /etc/yum.repos.d/mongo.repo
 
-VALIDATE $? "Copying MONDO repo " &>> $LOGFILE
+VALIDATE $? "Copying MONDO repo " 
 
 dnf install mongodb-org-shell -y
 
-VALIDATE $? "Installing MONGODB clinet " &>> $LOGFILE
+VALIDATE $? "Installing MONGODB clinet " 
 
 mongo --host mongodb.daws76s.online </app/schema/catalogue.js
 
-VALIDATE $? " Loading catalouge data " &>> $LOGFILE
+VALIDATE $? " Loading catalouge data " 
 
 
